@@ -4,11 +4,14 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Font;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
@@ -34,7 +37,6 @@ import com.jgoodies.forms.layout.FormSpecs;
 public class GUI extends JFrame {
 
 	private JPanel contentPane;
-
 	/**
 	 * Launch the application.
 	 */
@@ -44,6 +46,7 @@ public class GUI extends JFrame {
 				try {
 					GUI frame = new GUI();
 					frame.setVisible(true);
+					frame.setResizable(false);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -63,7 +66,28 @@ public class GUI extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
-		
+		JLabel etiquetaPanelInicial = new JLabel();
+		etiquetaPanelInicial.setForeground(Color.CYAN);
+		etiquetaPanelInicial.setVerticalAlignment(SwingConstants.TOP);
+		etiquetaPanelInicial.setFont(new Font("Lucida Sans Unicode", Font.PLAIN, 32));
+		etiquetaPanelInicial.setText("Presione para iniciar");
+		etiquetaPanelInicial.setHorizontalAlignment(SwingConstants.CENTER);
+		etiquetaPanelInicial.setBounds(0, 0, 743, 631);
+		ImageIcon imagen= new ImageIcon("src\\Logica\\Images\\InicioImg");
+		etiquetaPanelInicial.setIcon(imagen);
+		reDimensionar(etiquetaPanelInicial,imagen);
+		etiquetaPanelInicial.repaint();
+		contentPane.add(etiquetaPanelInicial);
+		etiquetaPanelInicial.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				iniciarJuego();
+				etiquetaPanelInicial.setVisible(false);
+				etiquetaPanelInicial.setEnabled(false);
+			}
+		});
+	}
+	private void iniciarJuego() {
 		JPanel panelReloj = new JPanel();
 		panelReloj.setBounds(0, 0, 742, 57);
 		contentPane.add(panelReloj);
@@ -78,62 +102,89 @@ public class GUI extends JFrame {
 		Sudoku juego= new Sudoku();
 		try {
 			juego.inicializarSudoku();
-		} catch (FileException e2) {}
-		try {
-			juego.inicializarSudoku();
-		} catch (FileException e1) {}
+		} catch (FileException e1) {
+			JOptionPane infomsg= new JOptionPane();
+			infomsg.showMessageDialog(contentPane, "Archivo inválido.");
+			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		}
 		JPanel panelSudoku = new JPanel();
 		panelSudoku.setBounds(0, 57, 742, 563);
 		contentPane.add(panelSudoku);
 		panelSudoku.setLayout(new GridLayout(9, 9, 0, 0));
-		
+	
 		for(int i=0;i<9;i++) {
 			for(int j=0;j<9;j++) {
-				Casillero c = juego.getCasillero(i, j);
+				Casillero c=juego.getCasillero(i, j);
 				ImageIcon grafico =c.getGrafico().getImg();
 				JLabel label= new JLabel();
 				label.setOpaque(true);
 				panelSudoku.add(label);
-				this.reDimensionar(label, grafico);
+				this.reDimensionarLabels(label, grafico);
 				label.setIcon(grafico);
 				if(!c.esModificable()) {
-					if(c.esValida()) {
-						label.setBackground(Color.green);
-					}else {
-						label.setBackground(Color.red);
-					}
+				if(c.esValida()) {
+					label.setBackground(Color.green);
+				}else {
+					label.setBackground(Color.red);
 				}
-				label.setBorder(new LineBorder(Color.black));				
-				label.addComponentListener(new ComponentAdapter() {
-					@Override
-					public void componentResized(ComponentEvent e) {
-						reDimensionar(label, grafico);
-						label.setIcon(grafico);
-					}
-				});				
-				label.addMouseListener(new MouseAdapter() {
-					@Override
-					public void mouseClicked(MouseEvent e) {
+			}
+			label.setBorder(new LineBorder(Color.black));				
+			label.addComponentListener(new ComponentAdapter() {
+				@Override
+				public void componentResized(ComponentEvent e) {
+					reDimensionarLabels(label, grafico);
+					label.setIcon(grafico);
+				}
+			});				
+			label.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
 						if(c.esModificable()) {	
 							juego.actualizar(c);
 							label.setIcon(c.getGrafico().getImg());
-							reDimensionar(label,c.getGrafico().getImg());
+							reDimensionarLabels(label,c.getGrafico().getImg());
 							if(c.esValida()) {
-								label.setBackground(Color.green);
+							label.setBackground(Color.green);
 							}else {
 								label.setBackground(Color.red);
 							}
 							label.repaint();
 						}
+						if(juego.verificarSolucion()) {
+							panelReloj.setEnabled(false);
+							panelReloj.setVisible(false);
+							panelSudoku.setEnabled(false);
+							panelSudoku.setVisible(false);
+							JLabel etiquetaFinal= new JLabel();
+							etiquetaFinal.setForeground(Color.CYAN);
+							etiquetaFinal.setVerticalAlignment(SwingConstants.TOP);
+							etiquetaFinal.setFont(new Font("Lucida Sans Unicode", Font.PLAIN, 32));
+							etiquetaFinal.setText("Ganaste");
+							etiquetaFinal.setHorizontalAlignment(SwingConstants.CENTER);
+							etiquetaFinal.setBounds(0, 0, 743, 631);
+							ImageIcon imagen= new ImageIcon("src\\Logica\\Images\\InicioImg");
+							etiquetaFinal.setIcon(imagen);
+							reDimensionar(etiquetaFinal,imagen);
+							etiquetaFinal.repaint();
+							contentPane.add(etiquetaFinal);
+						}
 					}
 				});				
 			}
-		}	
+		}
+	}
+	
 		
+	private void reDimensionarLabels(JLabel label, ImageIcon grafico) {
+		if(grafico!=null) {
+			Image img= grafico.getImage().getScaledInstance(100,70, java.awt.Image.SCALE_SMOOTH);
+			grafico.setImage(img);
+			label.repaint();
+		}
 	}
 	private void reDimensionar(JLabel label, ImageIcon grafico) {
 		if(grafico!=null) {
-			Image img= grafico.getImage().getScaledInstance(100,70, java.awt.Image.SCALE_SMOOTH);
+			Image img= grafico.getImage().getScaledInstance(label.getWidth(),label.getHeight(), java.awt.Image.SCALE_SMOOTH);
 			grafico.setImage(img);
 			label.repaint();
 		}

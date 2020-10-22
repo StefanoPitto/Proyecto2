@@ -43,19 +43,29 @@ public class Sudoku {
 					str =br.readLine();
 				} catch (IOException e) {}
 				str=str.trim();
+				if(str.length()!=17) {
+					throw new FileException("Archivo inválido.");
+				}
 				for(int i=0;i<str.length();i++) {
-					System.out.println(str.length());
 					char c=str.charAt(i);
-					if(c>='0'&&c<='9') {
-						int m= c-'0';
-						if(m!=0) {
-							matrizSudoku[j][contador].setElement(m);
-							matrizSudoku[j][contador].setModificable(false);
-							this.verificar(matrizSudoku[j][contador]);
+					if(i%2==0) {
+						if(c>='0'&&c<='9') {
+							int m= c-'0';
+							if(m!=0) {
+								matrizSudoku[j][contador].setElement(m);
+								matrizSudoku[j][contador].setModificable(false);
+								this.verificar(matrizSudoku[j][contador]);
+							}
+							contador++;
+						}else {
+							throw new FileException("Archivo inválido.");
 						}
-						contador++;
-					}
 					
+					}else {
+						if(c!=' ') {
+							throw new FileException("Archivo inválido");
+						}
+					}
 				}
 			}
 	}
@@ -113,5 +123,15 @@ public class Sudoku {
 	
 	public int getCantFilas() {
 		return matrizSudoku.length;
+	}
+	public boolean verificarSolucion() {
+		for(int i=0;i<matrizSudoku.length;i++) {
+			for(int j=0;j<matrizSudoku.length;j++) {
+				if(!matrizSudoku[i][j].esValida()) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 }
