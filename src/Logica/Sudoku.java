@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Scanner;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -30,7 +29,7 @@ public class Sudoku {
 	}	
 	
 	public void inicializarSudoku() throws FileException{			
-			File archivo = new File("E:\\Users\\Stefano Pitto\\eclipse-workspace\\Proyecto\\src\\Logica\\sudoku.txt");
+			File archivo = new File("src\\Logica\\sudoku.txt");
 			FileReader fr = null;
 			try {
 				fr = new FileReader(archivo);
@@ -74,7 +73,6 @@ public class Sudoku {
 			c.actualizar();
 			logger.info("El casillero "+c.getFila()+"|"+c.getColumna()+" fue actualizado.");
 			verificar(c);
-			
 	}
 	
 	private void verificar(Casillero c) {
@@ -83,7 +81,7 @@ public class Sudoku {
 		for(int i=0;i<matrizSudoku.length&&!encontre;i++) {
 			if(i!=casillero.getFila()) {
 				if(matrizSudoku[i][c.getColumna()].getElement()==casillero.getElement()) {
-					matrizSudoku[i][c.getColumna()].setEsValida(false);// Si está repetido setea como falso posición válida.
+					c.setEsValida(false);// Si está repetido setea como falso posición válida.
 					encontre=true;
 					logger.info("El casillero "+casillero.getFila()+"|"+casillero.getColumna()+" no es válido.");
 				}
@@ -93,7 +91,7 @@ public class Sudoku {
 		for(int i=0;i<matrizSudoku.length&&!encontre;i++) {
 			if(i!=casillero.getColumna()) {
 				if(matrizSudoku[c.getFila()][i].getElement()==casillero.getElement()){
-					matrizSudoku[c.getFila()][i].setEsValida(false);// Si está repetido setea como falso posición válida.
+					c.setEsValida(false);// Si está repetido setea como falso posición válida.
 					encontre=true;
 					logger.info("El casillero "+c.getFila()+"|"+c.getColumna()+" no es válido.");
 				}
@@ -105,7 +103,7 @@ public class Sudoku {
 			for(int j=c1*3;j<c1+3&&!encontre;j++){
 				if(i!=casillero.getFila()&&i!=casillero.getColumna()) {
 					if(matrizSudoku[i][j].getElement()==casillero.getElement()) {
-						matrizSudoku[i][j].setEsValida(false); // Si está repetido setea como falso posición válida.
+						c.setEsValida(false); // Si está repetido setea como falso posición válida.
 						encontre=true;
 						logger.info("El casillero "+casillero.getFila()+"|"+casillero.getColumna()+" no es válido.");
 					}
@@ -113,7 +111,7 @@ public class Sudoku {
 			}	
 		}	
 		if(!encontre) {
-			matrizSudoku[casillero.getFila()][casillero.getColumna()].setEsValida(true); // Si no está repetido setea como verdadero posición válida.
+			c.setEsValida(true); // Si no está repetido setea como verdadero posición válida.
 			logger.info("El casillero "+casillero.getFila()+"|"+casillero.getColumna()+" es válido.");
 		}
 	}	

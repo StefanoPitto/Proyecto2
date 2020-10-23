@@ -1,8 +1,6 @@
 package GUI;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
 
@@ -28,12 +26,8 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Timer;
-import java.util.TimerTask;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.RowSpec;
-import com.jgoodies.forms.layout.FormSpecs;
 
+@SuppressWarnings("serial")
 public class GUI extends JFrame {
 
 	private JPanel contentPane;
@@ -81,9 +75,9 @@ public class GUI extends JFrame {
 		etiquetaPanelInicial.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				iniciarJuego();
 				etiquetaPanelInicial.setVisible(false);
 				etiquetaPanelInicial.setEnabled(false);
+				iniciarJuego();
 			}
 		});
 	}
@@ -105,7 +99,8 @@ public class GUI extends JFrame {
 		} catch (FileException e1) {
 			JOptionPane infomsg= new JOptionPane();
 			infomsg.showMessageDialog(contentPane, "Archivo inválido.");
-			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			System.exit(0);
+			
 		}
 		JPanel panelSudoku = new JPanel();
 		panelSudoku.setBounds(0, 57, 742, 563);
@@ -122,12 +117,12 @@ public class GUI extends JFrame {
 				this.reDimensionarLabels(label, grafico);
 				label.setIcon(grafico);
 				if(!c.esModificable()) {
-				if(c.esValida()) {
-					label.setBackground(Color.green);
-				}else {
-					label.setBackground(Color.red);
+					if(c.esValida()) {
+						label.setBackground(Color.green);
+					}else {
+						label.setBackground(Color.red);
+					}
 				}
-			}
 			label.setBorder(new LineBorder(Color.black));				
 			label.addComponentListener(new ComponentAdapter() {
 				@Override
